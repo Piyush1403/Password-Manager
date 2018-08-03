@@ -6,7 +6,7 @@ Created on Wed Aug  1 10:51:39 2018
 @author: piyush
 """
 
-# This is basically a insecure password locker. 
+# This is basically an insecure password manager. 
 
 
 import sys, pyperclip
@@ -14,18 +14,18 @@ from Crypto.Cipher import XOR
 import base64, pickle, getpass
 
 
-if len(sys.argv) < 2:
-    print('Account name is missing')
+if len(sys.argv) < 2:                                                   # If number of args is 1 i.e only filename, no account
+    print('Account name is missing')                                    # name, then it throws an error. 
     sys.exit()
 
                 
 account = sys.argv[1]
 
-PASSWORDS = pickle.load( open( "Locker.p", "rb" ) )
+PASSWORDS = pickle.load( open( "Locker.p", "rb" ) )                     # Using pickle library to read the dictionary
 
 
-def encrypt(key, plaintext):
-  cipher = XOR.new(key)
+def encrypt(key, plaintext):                                            # Encrypting and decrypting using Python's inbuilt 
+  cipher = XOR.new(key)                                                 # library methods.
   return base64.b64encode(cipher.encrypt(plaintext))
 
 def decrypt(key, ciphertext):
@@ -44,10 +44,9 @@ if (account not in PASSWORDS):
         account_name = input("Enter account's name\n")
         account_pass = getpass.getpass("Enter account's password\n")
         encrypted_pass = (encrypt('16BIT0234',account_pass)).decode('UTF-8')
-        data = {account_name:encrypted_pass}
-        PASSWORDS[account_name] = encrypted_pass
-        pickle.dump( PASSWORDS, open( "Locker.p", "wb" ) )
-        print("Account successfully added!\n")
+        PASSWORDS[account_name] = encrypted_pass                        
+        pickle.dump( PASSWORDS, open( "Locker.p", "wb" ) )              # Account name and encrypted password are dumped in 
+        print("Account successfully added!\n")                          # the new dictionary in Locker.p
 
     else:
         print("Invalid input.\n")
@@ -63,8 +62,8 @@ else:
     elif(menu1==1):
         PASSWORDS_READ = pickle.load( open( "Locker.p", "rb" ) )
         pyperclip.copy((decrypt('16BIT0234',PASSWORDS_READ[account])).decode('UTF-8'))
-        print('Password for ' + account + ' copied to clipboard.')
-    else:
+        print('Password for ' + account + ' copied to clipboard.')      # If account name is already there, copy it to 
+    else:                                                               # clipboard using pyperclip library
         print("Invalid input.\n")
         sys.exit()
         
